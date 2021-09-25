@@ -1,0 +1,32 @@
+     * {
+            font-family: 'Nanum Pen Script', cursive;
+        }
+
+        .image {
+            background-image: url('https://www.ancient-origins.net/sites/default/files/field/image/Agesilaus-II-cover.jpg');
+            background-position: center top; 
+            background-size: 100% 100%; 
+            border-radius: 30px;
+            width: 1000px;
+            height: 500px;
+        }   
+
+        #div2 {
+            width: 1000px;
+            margin: auto
+        }
+
+        #div1 > div > h2{
+            color: white;
+            top: 200px;
+            position : relative;
+        }
+        #div1 > div > h1{
+            color: white;
+            top: 150px;
+            position : relative;
+            font-size : 4em;
+        }
+
+    
+   
