@@ -1,0 +1,230 @@
+<!Doctype html>
+<html lang="ko">
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS --> <link rel="stylesheet" 
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+        crossorigin="anonymous"> 
+        <!-- JS --> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
+        crossorigin="anonymous"></script>
+
+
+        <!-- 구글폰트 -->
+        <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+
+        <title>SW사관학교 정글 | 간단메모</title>
+
+        <!-- style -->
+        <style type="text/css">
+            * {
+                font-family: "Stylish", sans-serif;
+            }
+
+            .wrap {
+                width: 900px;
+                margin: auto;
+            }
+
+            .comment {
+                color: blue;
+                font-weight: bold;
+            }
+
+            #header{
+                float : left;
+            }
+
+            #post-box {
+                width: 500px;
+                border-radius: 5px;
+
+            }
+
+            #button1{
+                background-color: #5a5a5a;
+                color : white;
+                margin : 10px 1px 20px 20px;
+            }
+
+            #button2{
+                background-color: black;
+                color : white;
+                
+            }
+            .ver-box {  
+                background-color: #5a5a5a;
+                color: white;
+                width: 100px;
+                height: 60px;
+                float: left;
+                margin-left: 1%;
+                box-sizing: border-box;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                $("#cards-box").html("");
+                showArticles();
+            });
+
+            var num = 0;
+
+            function deleteCard(input, id, title, comment) {
+                $('#' + input).remove()
+
+                $.ajax({
+                        type: "PUT", // POST 방식으로 요청하겠다.
+                        url: "/memo", // /memo라는 url에 요청하겠다.
+                        data: { _id_give: id, tite_give: title, comment_give: comment}, // 데이터를 주는 방법
+                        
+                        success: function(response){ // 성공하면
+                        if (response["result"] == "success") {
+                        alert("삭제 성공!");
+				    // 3. 성공 시 페이지 새로고침하기
+                        window.location.reload();
+                        } else {
+                        alert("서버 오류!")
+                         }
+                     }
+                 })
+
+            }
+
+            function postArticle() {
+  // 1. 유저가 입력한 데이터를 #post-url과 #post-comment에서 가져오기
+                let title = $("#post-title").val();
+                let comment = $("#post-comment").val();
+
+  // 2. memo에 POST 방식으로 메모 생성 요청하기
+                $.ajax({
+                        type: "POST", // POST 방식으로 요청하겠다.
+                        url: "/memo", // /memo라는 url에 요청하겠다.
+                        data: { title_give: title, comment_give: comment}, // 데이터를 주는 방법
+                        success: function(response){ // 성공하면
+                        if (response["result"] == "success") {
+                        alert("포스팅 성공!");
+				    // 3. 성공 시 페이지 새로고침하기
+                        window.location.reload();
+                        } else {
+                        alert("서버 오류!")
+                         }
+                     }
+                 })
+}
+
+            function showArticles() {
+                $.ajax({
+                        type: "GET",
+                        url: "/memo",
+                        data: {},
+                        success: function(response){
+                        let articles = response["articles"];
+                        for (let i = 0; i < articles.length; i++) {
+                        makeCard(articles[i]["_id"], articles[i]["title"], articles[i]["comment"])
+                        }
+                    }
+                })
+}
+            function saveModifyArticles(input, id){
+                let title = $("#modify-title").val();
+                let comment = $("#modify-comment").val();
+                $.ajax({
+                        type: "PUT",
+                        url: "/memo/1",
+                        data: {_id_give: id, title_give: title, comment_give: comment},
+                        success: function(response){ // 성공하면
+                        if (response["result"] == "success") {
+                        alert("수정 성공!");
+				    // 3. 성공 시 페이지 새로고침하기
+                        window.location.reload();
+                        } else {
+                        alert("서버 오류!")
+                         }
+                     }
+                    
+                })
+            }
+            
+            function makeCard(id, title, comment) {
+                //불러오기 필요없음
+                //
+                num++;
+                let temp_html = `<div class="card" id="${num}">
+                        <div class="card-body">
+    
+                        <h4 class="card-title">${title}</h4>
+                        <p class="card-text">${comment}</p>
+                        </div>
+                        <button type="button" id="button1" onclick="modifyCard('${num}', '${id}', '${title}', '${comment}')">수정</button>
+                        <button type="button" id="button2" onclick="deleteCard('${num}', '${id}')">삭제</button>
+                    </div>`;
+                $("#cards-box").append(temp_html);
+
+                    }
+            
+            function modifyCard(num, id, title, comment){
+               // $('#'+num).hide();   
+                const element = document.getElementById(num)
+                let temp_html = `<div class="form-group">
+                            <textarea id="modify-title" class="form-control" placeholder="">${title}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="modify-comment" class="form-control" rows="3" placeholder="">${comment}</textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="saveModifyArticles('${num}', '${id}')">저장</button>`;
+                element.innerHTML = temp_html
+                
+            }
+            function modifiedCard(num, id, title, comment){
+                const element = document.getElementById(num)
+                let temp_html = `<div class="card-body">
+                        <h4 class="card-title">${title}</h4>
+                        <p class="card-text">${comment}</p>
+                        </div>
+                        <button type="button" id="button1" onclick="modifyCard('${num}', '${id}', '${title}', '${comment}')">수정</button>
+                        <button type="button" id="button2" onclick="deleteCard('${num}', '${id}')">삭제</button>`;
+                element.innerHTML = temp_html
+            }
+        </script>
+
+    </head>
+
+    <body>
+        <div class="wrap">
+            <div class="jumbotron">
+                <h1 class="display-4" id = "header">나홀로메모장</h1>
+                <button class="ver-box">
+                    <h2>ver2.0</h2> 
+                </button>
+                <div>
+               
+                </div>
+                <div id="post-box" class="form-post">
+                    <div>
+                        <div class="form-group">
+                            <input id="post-title" class="form-control" placeholder="메모 제목을 입력하세요">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="post-comment" class="form-control" rows="5" placeholder="내용을 입력하세요"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="postArticle()">저장하기</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <div id="cards-box" class="card-columns">
+                
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
