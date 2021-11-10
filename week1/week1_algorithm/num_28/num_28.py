@@ -8,7 +8,7 @@ data = list(map(int, sys.stdin.readline().strip().split()))
 
 class Solution:
     def base_case(self, N, r, c):
-        if not r :
+        if not r :  #r ==0
             if not c :
                 return 0
             else :
