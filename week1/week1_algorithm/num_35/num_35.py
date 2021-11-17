@@ -19,29 +19,25 @@ for i in range(n):
 class Solution:
     def move_city(self, cost_graph, visited, city, expense, cur_min):
         #그래프 그냥 n 개수 만큼 루프 돌리면 됨 
-        #print("aftre visit", visited)
+        print("aftre visit", visited)
         #visited가 첫줄 이후로 업데이트가 안되네 
-        '''
-        if False not in visited:
-            print("if inside?")
-            if expense < cur_min:
-                 print("value chg", cur_min, expense)
-                 cur_min = expense
-                 return cur_min
-        '''
         for dst, pay in enumerate(cost_graph[city]):
             if not dst is city and visited[dst] is False:
                 if expense + pay > cur_min :
                     continue
                 expense += pay
                 visited[dst] = True
-                cur_min = self.move_city(cost_graph, visited, dst, expense, cur_min)
+                cur_min, expense = self.move_city(cost_graph, visited, dst, expense, cur_min)
+                print("line35", expense)
             elif False not in visited and visited[dst] == 'start':
                 expense += pay
                 if expense < cur_min:
                     cur_min = expense
-                return cur_min
-        return cur_min 
+                print("line35", expense)
+                return cur_min, expense
+            print("line36", expense)
+        return cur_min, expense
+    #파이썬은 함수내부에서 값 변경이 안됨 
 #방문 도장 찍음
 #모두 방문한 경우 재귀를 끝냄
 #start를 구분하는 방법
@@ -49,22 +45,15 @@ class Solution:
 #처음에 start 로직을 넣는다. 
         
     def TSP(self, cost_graph):
-        #visited = [False for i in range(n)]
         min = pow(10, 6) * n
-        #visited = [False for i in range(n)]
         for start_city in range(0,n):
             visited = [False for i in range(n)]
             visited[start_city] = 'start'
-            min = self.move_city(cost_graph, visited, start_city, 0, min)
+            min, _  = self.move_city(cost_graph, visited, start_city, 0, min)
+            print(min)
         return min
 
 if __name__ == "__main__":
-    print(data)
-    list = []
-    list.append(True)
-    list.append(11)
-    list.append("test")
-    print(list)
     sol = Solution()
     graph = {}
     for i in range(n):
